@@ -59,18 +59,22 @@ export async function getProducts({
 
   const hasMore = products.length > limit;
 
-  const nextItem = products[limit - 1];
+  let nextCursor = null;
 
-  const nextCursor = encodeCursor({
-    createdAt: nextItem.createdAt.toISOString(),
-    id: nextItem.id.toString(),
-  });
+  if (hasMore) {
+    const nextItem = products[limit - 1];
+
+    nextCursor = encodeCursor({
+      createdAt: nextItem.createdAt.toISOString(),
+      id: nextItem.id.toString(),
+    });
+  }
 
   const results = hasMore ? products.slice(0, limit) : products;
 
   return {
     products: results,
-    nextCursor: hasMore ? nextCursor : null,
+    nextCursor,
     hasMore,
   };
 }
